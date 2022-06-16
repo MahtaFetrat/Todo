@@ -1,3 +1,0 @@
-import Swift
-
-CLI.menu()
