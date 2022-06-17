@@ -2,8 +2,6 @@ import Foundation
 
 
 class CLI {
-    static let dateFormatter = CLI.getDateFormatter()
-
     static func menu() {
         print("""
         Welcome to Todo app! What do you want to do?
@@ -28,19 +26,9 @@ class CLI {
         }
     }
 
-    private static func getDateFormatter() -> DateFormatter {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        dateFormatter.locale = Locale(identifier: "fa-IR")
-        dateFormatter.timeZone = TimeZone(identifier: "Asia/Tehran")
-        dateFormatter.calendar = Calendar(identifier: .persian)
-
-        return dateFormatter
-    }
-
     static func inputDate() -> Date {
         print("Please enter date in format yyyy-MM-dd HH:mm:ss")
-         if let date = CLI.dateFormatter.date(from: readLine() ?? "") {
+         if let date = PersianDateFormatter.parseDate(from: readLine() ?? "") {
              return date
          }
          print("Invalid date!")
@@ -49,9 +37,11 @@ class CLI {
 
     static func addTodo() {
         print("Please enter a title for this Todo:")
-        let title = readLine()
+        let name = readLine() ?? "Untitled"
         let date = CLI.inputDate()
-        print(CLI.dateFormatter.string(from: date))
+        
+        var todo = Todo(name: name, date: date)
+        Todo.addTodo(todo: todo)
     }
 
     static func viewTodoList() {
