@@ -22,4 +22,8 @@ class PersianDateFormatter {
     static func currentDate() -> Date {
         return PersianDateFormatter.parseDate(from: dateFormatter.string(from: Date())) ?? Date()
     }
+
+    static func toString(date: Date) -> String { 
+        return PersianDateFormatter.dateFormatter.string(from: date)
+    }
 }
