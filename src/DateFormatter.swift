@@ -1,29 +1,29 @@
 import Foundation
 
 
-class PersianDateFormatter {
+class DateFormatUtils {
     private static let dateFormatter: DateFormatter = getDateFormatter()
 
     private static func getDateFormatter() -> DateFormatter {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        dateFormatter.locale = Locale(identifier: "fa-IR")
-        dateFormatter.timeZone = TimeZone(identifier: "Asia/Tehran")
-        dateFormatter.calendar = Calendar(identifier: .persian)
 
         return dateFormatter
     }
 
     static func parseDate(from: String) -> Date? {
-        return PersianDateFormatter.dateFormatter.date(from: from)
+        return DateFormatUtils.dateFormatter.date(from: from)
     }
 
-
     static func currentDate() -> Date {
-        return PersianDateFormatter.parseDate(from: dateFormatter.string(from: Date())) ?? Date()
+        return DateFormatUtils.parseDate(from: dateFormatter.string(from: Date())) ?? Date()
     }
 
     static func toString(date: Date) -> String { 
-        return PersianDateFormatter.dateFormatter.string(from: date)
+        return DateFormatUtils.dateFormatter.string(from: date)
+    }
+
+    static func compare(this: Date, other: Date) -> ComparisonResult {
+        return  Calendar.current.compare(this, to: other, toGranularity: .day)
     }
 }
