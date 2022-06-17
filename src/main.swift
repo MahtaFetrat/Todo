@@ -1,3 +1,3 @@
 import Swift
 
-CLI.menu()
+CLI.run()
