@@ -58,6 +58,7 @@ class Todo: CustomStringConvertible {
         for (index, todo) in Todo.allTodos.enumerated() {
             if todo.id == id {
                 deletingIndex = index
+                break;
             }
         }  
 
