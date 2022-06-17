@@ -97,7 +97,9 @@ class CLI {
         let todoList: [Todo] = Todo.sortedTodoList(sortType: sortType, sortOrder: sortOrder)
 
         print(Todo.listViewHeader)
-        print(todoList)   
+        for todo in todoList {
+            print(todo) 
+        }  
     }
 
     static func viewSpecialTodo() {
