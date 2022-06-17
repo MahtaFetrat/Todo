@@ -21,7 +21,7 @@ enum SortOrder {
 }
 
 
-class Todo {
+class Todo: CustomStringConvertible {
     private static var lastId = 1
     private static var allTodos: [Todo] = []
 
@@ -43,7 +43,7 @@ class Todo {
     }
 
     var description: String {
-        return "\(self.id)\t\(self.name)\t\(dueDate)"
+        return "\(self.id)\t\(self.name)\t\(PersianDateFormatter.toString(date: dueDate))"
     }
 
     static let listViewHeader: String = "id\tname\tdue date"
