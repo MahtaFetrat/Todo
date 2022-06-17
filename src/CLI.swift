@@ -2,11 +2,12 @@ import Foundation
 
 
 class CLI {
+    private static var sortType: SortType = .sortByName
+    private static var sortOrder: SortOrder = .ascending
+
     static func run() {
         print("Welcome to Todo app!")
-        while true {
-            CLI.menu()
-        }
+        menu()
     }
     
     static func menu() {
@@ -19,17 +20,142 @@ class CLI {
         """)
         let choice = (readLine() ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         switch choice {
+            case "1":
+                addTodo()
+            case "2":
+                viewTodoList()
+            case "3":
+                viewTodoListByDueDate()
+            case "4":
+                exit(0)
+            default:
+                print("\nInvalid input! Please choose one of the numbers above")
+                menu()
+        }
+    }
+
+    static func addTodo() {
+        print("\nPlease enter a title for this Todo:")
+        let name = readLine() ?? "Untitled"
+        let date = inputDateTime()
+        
+        var todo = Todo(name: name, dueDate: date)
+        Todo.addTodo(todo: todo)
+
+        print("\nTodo successfully added!\n")
+        menu()
+    }
+
+    static func viewTodoList() {
+       getSortType()
+    }
+
+    static func viewTodoListByDueDate() {
+        let date = inputDate()
+        let todoList: [Todo] = Todo.getTodosByDueDate(date: date)
+        print(Todo.listViewHeader)
+        for todo in todoList {
+            print(todo) 
+        }
+
+        if !todoList.isEmpty {
+            deleteTodoMenu(back: menu)   
+        } else {
+            menu()
+        }
+    }
+
+    private static func getSortType () {
+        print("""
+        Sort Todos by ...
+        1. Name
+        2. Date Created
+        3. Due Date
+        4. Back
+        """)
+        let choice = (readLine() ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        switch choice {
         case "1":
-            CLI.addTodo()
+            sortType = SortType.sortByName
         case "2":
-            viewTodoList()
+            sortType = SortType.sortByDateCreated
         case "3":
-            CLI.viewTodosByDueDate()
+            sortType = SortType.sortByDueDate
         case "4":
-            exit(0)
+            menu()
         default:
             print("Invalid input! Please choose one of the numbers above")
-            CLI.menu()
+            getSortType()
+        }
+
+        getSortOrder()
+    } 
+
+    private static func getSortOrder() {
+        print("""
+        Sort order ...
+        1. Ascending
+        2. Descending
+        3. Back
+        """)
+        let choice = (readLine() ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        switch choice {
+        case "1":
+            sortOrder = SortOrder.ascending
+        case "2":
+            sortOrder = SortOrder.descending
+        case "3":
+            viewTodoList()
+        default:
+            print("Invalid input! Please choose one of the numbers above")
+            getSortOrder()
+        }
+
+        printSortedTodoList()
+    }
+
+    static func printSortedTodoList() {
+        let todoList: [Todo] = Todo.sortedTodoList(sortType: sortType, sortOrder: sortOrder)
+
+        print(Todo.listViewHeader)
+        for todo in todoList {
+            print(todo) 
+        }
+
+        if !todoList.isEmpty {
+            deleteTodoMenu(back: getSortOrder)   
+        } else {
+            menu()
+        }
+    }
+
+    static func deleteTodoMenu(back: () -> ()) {
+        print("""
+        \nDo you want to delete any?
+        1. Delete
+        2. Back
+        """)
+        let choice = (readLine() ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        switch choice {
+            case "1":
+                inputTodoIdToDelete()
+            case "2":
+                back()
+            default:
+                print("Invalid input! Please choose one of the numbers above")
+                return deleteTodoMenu(back: back)
+        }
+    }
+
+    static func inputTodoIdToDelete() {
+        print("Please enter the Todo id to delete")
+        let id = Int((readLine() ?? "").trimmingCharacters(in: .whitespacesAndNewlines)) ?? -1
+        if !Todo.deleteTodo(id: id) {
+            print("Invalid id! Please enter a id from the list above")
+            inputTodoIdToDelete()
+        } else {
+            print("\nTodo deleted successfully!\n")
+            menu()
         }
     }
 
@@ -39,7 +165,7 @@ class CLI {
              return date
          }
          print("Invalid date!")
-         return CLI.inputDateTime()
+         return inputDateTime()
     }
 
     static func inputDate() -> Date {
@@ -48,108 +174,6 @@ class CLI {
              return date
          }
          print("Invalid date!")
-         return CLI.inputDate()
-    }
-
-    static func addTodo() {
-        print("Please enter a title for this Todo:")
-        let name = readLine() ?? "Untitled"
-        let date = CLI.inputDateTime()
-        
-        var todo = Todo(name: name, dueDate: date)
-        Todo.addTodo(todo: todo)
-    }
-
-    private static func getSortType () -> SortType {
-        print("""
-        Sort Todos by ...
-        1. Name
-        2. Date Created
-        3. Due Date
-        """)
-        let choice = (readLine() ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-        switch choice {
-        case "1":
-            return SortType.sortByName
-        case "2":
-            return SortType.sortByDateCreated
-        case "3":
-            return SortType.sortByDueDate
-        default:
-            print("Invalid input! Please choose one of the numbers above")
-            return CLI.getSortType()
-        }
-    } 
-
-    private static func getSortOrder() -> SortOrder {
-        print("""
-        Sort order ...
-        1. Ascending
-        2. Descending
-        """)
-        let choice = (readLine() ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-        switch choice {
-        case "1":
-            return SortOrder.ascending
-        case "2":
-            return SortOrder.descending
-        default:
-            print("Invalid input! Please choose one of the numbers above")
-            return CLI.getSortOrder()
-        }
-    }
-
-    static func viewTodoList() {
-        let sortType: SortType = CLI.getSortType()
-        let sortOrder: SortOrder = CLI.getSortOrder()
-
-        let todoList: [Todo] = Todo.sortedTodoList(sortType: sortType, sortOrder: sortOrder)
-
-        print(Todo.listViewHeader)
-        for todo in todoList {
-            print(todo) 
-        }
-
-        if !todoList.isEmpty {
-            deleteTodoMenu()   
-        }   
-    }
-
-    static func deleteTodoMenu() {
-        print("""
-        Do you want to delete any?
-        1. Delete
-        2. Back
-        """)
-        let choice = (readLine() ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-        switch choice {
-            case "1":
-                inputTodoIdToDelete()
-            default:
-                print("Invalid input! Please choose one of the numbers above")
-                return CLI.deleteTodoMenu()
-        }
-    }
-
-    static func inputTodoIdToDelete() {
-        print("Please enter the Todo id to delete")
-        let id = Int((readLine() ?? "").trimmingCharacters(in: .whitespacesAndNewlines)) ?? -1
-        if !Todo.deleteTodo(id: id) {
-            print("Invalid id! Please enter a id from the list above")
-            CLI.inputTodoIdToDelete()
-        }
-    }
-
-    static func viewTodosByDueDate() {
-        let date = CLI.inputDate()
-        let todoList: [Todo] = Todo.getTodosByDueDate(date: date)
-        print(Todo.listViewHeader)
-        for todo in todoList {
-            print(todo) 
-        }
-
-        if !todoList.isEmpty {
-            deleteTodoMenu()   
-        }   
+         return inputDate()
     }
 }
