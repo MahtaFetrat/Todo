@@ -52,4 +52,19 @@ class Todo: CustomStringConvertible {
         let sortedTodoList = Todo.allTodos.sorted(by: sortType.getSorter())
         return (sortOrder == .ascending ? sortedTodoList : sortedTodoList.reversed())
     }
+
+    static func deleteTodo(id: Int) -> Bool {
+        var deletingIndex = -1
+        for (index, todo) in Todo.allTodos.enumerated() {
+            if todo.id == id {
+                deletingIndex = index
+            }
+        }  
+
+        if deletingIndex != -1 {
+            Todo.allTodos.remove(at: deletingIndex)
+            return true
+        }
+        return false
+    }
 }
