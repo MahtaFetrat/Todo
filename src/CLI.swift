@@ -24,7 +24,7 @@ class CLI {
         case "2":
             viewTodoList()
         case "3":
-            CLI.viewSpecialTodo()
+            CLI.viewTodosByDueDate()
         case "4":
             exit(0)
         default:
@@ -33,9 +33,18 @@ class CLI {
         }
     }
 
-    static func inputDate() -> Date {
+    static func inputDateTime() -> Date {
         print("Please enter date in format yyyy-MM-dd HH:mm:ss")
-         if let date = PersianDateFormatter.parseDate(from: readLine() ?? "") {
+         if let date = DateFormatUtils.parseDate(from: readLine() ?? "") {
+             return date
+         }
+         print("Invalid date!")
+         return CLI.inputDateTime()
+    }
+
+    static func inputDate() -> Date {
+        print("Please enter date in format yyyy-MM-dd")
+         if let date = DateFormatUtils.parseDate(from: "\(readLine() ?? "") 00:00:01") {
              return date
          }
          print("Invalid date!")
@@ -45,7 +54,7 @@ class CLI {
     static func addTodo() {
         print("Please enter a title for this Todo:")
         let name = readLine() ?? "Untitled"
-        let date = CLI.inputDate()
+        let date = CLI.inputDateTime()
         
         var todo = Todo(name: name, dueDate: date)
         Todo.addTodo(todo: todo)
@@ -101,7 +110,7 @@ class CLI {
             print(todo) 
         }
 
-        if ! todoList.isEmpty() {
+        if !todoList.isEmpty {
             deleteTodoMenu()   
         }   
     }
@@ -131,7 +140,16 @@ class CLI {
         }
     }
 
-    static func viewSpecialTodo() {
-        print("3 is ure choice")
+    static func viewTodosByDueDate() {
+        let date = CLI.inputDate()
+        let todoList: [Todo] = Todo.getTodosByDueDate(date: date)
+        print(Todo.listViewHeader)
+        for todo in todoList {
+            print(todo) 
+        }
+
+        if !todoList.isEmpty {
+            deleteTodoMenu()   
+        }   
     }
 }
