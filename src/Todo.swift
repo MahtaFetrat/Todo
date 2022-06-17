@@ -23,7 +23,7 @@ enum SortOrder {
 
 class Todo: CustomStringConvertible {
     private static var lastId = 1
-    private static var allTodos: [Todo] = []
+     static var allTodos: [Todo] = []
 
     var id: Int
     var name: String
@@ -35,7 +35,7 @@ class Todo: CustomStringConvertible {
         self.id = Todo.lastId
         self.name = name
         self.dueDate = dueDate
-        self.dateCreated = PersianDateFormatter.currentDate()
+        self.dateCreated = DateFormatUtils.currentDate()
     }
 
     static func addTodo(todo: Todo) {
@@ -43,7 +43,7 @@ class Todo: CustomStringConvertible {
     }
 
     var description: String {
-        return "\(self.id)\t\(self.name)\t\(PersianDateFormatter.toString(date: dueDate))"
+        return "\(self.id)\t\(self.name)\t\(DateFormatUtils.toString(date: dueDate))"
     }
 
     static let listViewHeader: String = "id\tname\tdue date"
@@ -66,5 +66,9 @@ class Todo: CustomStringConvertible {
             return true
         }
         return false
+    }
+
+    static func getTodosByDueDate(date: Date) -> [Todo] {
+        return Todo.allTodos.filter { Calendar.current.compare($0.dueDate, to: date, toGranularity: .day) == .orderedSame }
     }
 }
