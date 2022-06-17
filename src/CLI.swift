@@ -99,7 +99,36 @@ class CLI {
         print(Todo.listViewHeader)
         for todo in todoList {
             print(todo) 
-        }  
+        }
+
+        if ! todoList.isEmpty() {
+            deleteTodoMenu()   
+        }   
+    }
+
+    static func deleteTodoMenu() {
+        print("""
+        Do you want to delete any?
+        1. Delete
+        2. Back
+        """)
+        let choice = (readLine() ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        switch choice {
+            case "1":
+                inputTodoIdToDelete()
+            default:
+                print("Invalid input! Please choose one of the numbers above")
+                return CLI.deleteTodoMenu()
+        }
+    }
+
+    static func inputTodoIdToDelete() {
+        print("Please enter the Todo id to delete")
+        let id = Int((readLine() ?? "").trimmingCharacters(in: .whitespacesAndNewlines)) ?? -1
+        if !Todo.deleteTodo(id: id) {
+            print("Invalid id! Please enter a id from the list above")
+            CLI.inputTodoIdToDelete()
+        }
     }
 
     static func viewSpecialTodo() {
