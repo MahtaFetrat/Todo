@@ -70,6 +70,7 @@ class Todo: CustomStringConvertible {
     }
 
     static func getTodosByDueDate(date: Date) -> [Todo] {
-        return Todo.allTodos.filter { Calendar.current.compare($0.dueDate, to: date, toGranularity: .day) == .orderedSame }
+        let todos = Todo.allTodos.filter { Calendar.current.compare($0.dueDate, to: date, toGranularity: .day) == .orderedSame }
+        return todos.sorted(by: SortType.sortByDueDate.getSorter())
     }
 }
