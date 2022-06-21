@@ -1,5 +1,6 @@
 import Foundation
 
+
 enum SortType {
     case sortByName, sortByDateCreated, sortByDueDate
 
@@ -22,8 +23,8 @@ enum SortOrder {
 
 
 class Todo: CustomStringConvertible {
-    private static var lastId = 1
-     static var allTodos: [Todo] = []
+    private static var lastId = 0
+    static var allTodos: [Todo] = []
 
     var id: Int
     var name: String
@@ -53,20 +54,13 @@ class Todo: CustomStringConvertible {
         return (sortOrder == .ascending ? sortedTodoList : sortedTodoList.reversed())
     }
 
-    static func deleteTodo(id: Int) -> Bool {
-        var deletingIndex = -1
-        for (index, todo) in Todo.allTodos.enumerated() {
-            if todo.id == id {
-                deletingIndex = index
+    static func deleteTodo(todo: Todo) {
+        for (index, todo1) in Todo.allTodos.enumerated() {
+            if todo1.id == todo.id {
+                Todo.allTodos.remove(at : index)
                 break;
             }
         }  
-
-        if deletingIndex != -1 {
-            Todo.allTodos.remove(at: deletingIndex)
-            return true
-        }
-        return false
     }
 
     static func getTodosByDueDate(date: Date) -> [Todo] {
